@@ -9,8 +9,8 @@ def get_data():
     params = {
     'client': 'Skillfactory',
     'client_key': 'M2MGWS',
-    'start': '2023-04-01 12:46:47.860798',
-    'end': '2023-04-01 13:46:47.860798'
+    'start': '2023-04-25 12:00:47.860798',
+    'end': '2023-04-25 18:00:47.860798'
     }
 
     res = []
@@ -44,7 +44,10 @@ def validate_data(incoming_data):
     expected_types = {
         'user_id': str,
         'created_at': str,
-        'is_correct': (bool, type(None))
+        'is_correct': (bool, type(None)),
+        'lis_outcome_service_url': str,
+        'lis_result_sourcedid': str,
+        'attempt_type': str
     }
 
     field_constraints = {

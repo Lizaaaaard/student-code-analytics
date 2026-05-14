@@ -5,7 +5,6 @@ from database import DatabaseConnection
 def main():
 
     data = get_data()
-
     db = None
 
     if data:

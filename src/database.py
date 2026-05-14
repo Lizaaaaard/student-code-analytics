@@ -36,7 +36,7 @@ class DatabaseConnection:
         logger.info('Соединение с БД закрыто')
 
     def post_data(self, data_list):       
-        columns = data_list[0].keys()
+        columns = ['oauth_consumer_key', 'user_id', 'attempt_type', 'is_correct', 'lis_outcome_service_url', 'created_at', 'lis_result_sourcedid']
 
         query = f"INSERT INTO data ({', '.join(columns)}) VALUES %s"
 
