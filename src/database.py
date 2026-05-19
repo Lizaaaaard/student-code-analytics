@@ -19,21 +19,21 @@ class DatabaseConnection:
 
     def __init__(self):
         if DatabaseConnection.__instance:
-            logger.error("Подключение уже установлено")
+            logger.error("Connection already established")
         else:
             self.connection = psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD, host=HOST, port=PORT)
             self.cursor = self.connection.cursor()
             DatabaseConnection.__instance = self
-            logger.info('Соединение с БД установлено')
+            logger.info('Connection to the database has been established')
 
     def save(self):
         self.connection.commit()
-        logger.info('Запрос в БД успешно сохранен')
+        logger.info('The query was successfully saved to the database')
 
     def close(self):
         self.cursor.close()
         self.connection.close()
-        logger.info('Соединение с БД закрыто')
+        logger.info('The connection to the database was closed')
 
     def post_data(self, data_list):       
         columns = ['oauth_consumer_key', 'user_id', 'attempt_type', 'is_correct', 'lis_outcome_service_url', 'created_at', 'lis_result_sourcedid']
@@ -49,5 +49,5 @@ class DatabaseConnection:
 
         except Exception as ex:
             self.connection.rollback()
-            logger.error(f"Ошибка при сохранении записи в БД: {ex}")
+            logger.error(f"Error saving record to the database: {ex}")
             raise ex

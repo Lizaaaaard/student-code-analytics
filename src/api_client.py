@@ -20,13 +20,13 @@ def get_data():
 
         r.raise_for_status()
 
-        logger.info(f'Данные с API успешно получены, статус: {r.status_code}')
+        logger.info(f'Data from API received successfully, status: {r.status_code}')
         
         data = r.json()        
 
         res = validate_data(data)
 
-        logger.info('Данные прошли пре-валидацию')
+        logger.info('The data has been validated')
         
         return res
 
@@ -39,7 +39,7 @@ def get_data():
     return None
 
 def validate_data(incoming_data):
-    logger.info('Запуск пре-валидации')
+    logger.info('Launch validation')
     
     expected_types = {
         'user_id': str,
@@ -67,13 +67,13 @@ def validate_data(incoming_data):
                 try:
                     params = ast.literal_eval(params)
                 except (ValueError, SyntaxError):
-                    logger.error(f"Ошибка парсинга строки: {params}")
+                    logger.error(f"String parsing error: {params}")
                     params = {}
 
         if isinstance(params, dict):
             row.update(params)
         else:
-            logger.error(f"Неожиданный тип данных в passback_params: {type(params)}")
+            logger.error(f"Unexpected data type in passback_params: {type(params)}")
             continue
         
         is_row_valid = True
@@ -82,7 +82,7 @@ def validate_data(incoming_data):
             val = row.get(key)
 
             if not isinstance(val, expected_type):
-                logger.error(f"Ошибка типа: {key} должен быть {expected_type}, а пришел {type(val)}")
+                logger.error(f"Type Error: {key} must be {expected_type}, but received {type(val)}")
                 is_row_valid = False
                 break
             
@@ -91,7 +91,7 @@ def validate_data(incoming_data):
 
             if key in field_constraints:
                 if val not in field_constraints[key]:
-                    logger.error(f"Ошибка значения: {key} содержит '{val}', а можно только {field_constraints[key]}")
+                    logger.error(f"Value error: {key} contains '{val}', but only {field_constraints[key]} is allowed")
                     is_row_valid = False
                     break
 
@@ -99,5 +99,3 @@ def validate_data(incoming_data):
             outcome_data.append(row)
     
     return outcome_data
-
-#print(get_data())
