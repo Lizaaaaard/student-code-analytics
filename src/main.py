@@ -1,11 +1,24 @@
 from logger import logger
-from api_client import get_data
+from api_client import APIClientService
 from database import DatabaseConnection
-from google_sheets_service import sheets_connect
+from google_sheets_service import GoogleSheetsService
+from pathlib import Path
+import json
+from email_service import EmailService
 
 def main():
 
-    data = get_data()
+    client = APIClientService(
+        client='Skillfactory',
+        client_key='M2MGWS',
+        api_url='https://b2b.itresume.ru/api/statistics'
+    )
+
+    data = client.fetch_data(
+        start_date='2026-04-25 00:00:00.00',
+        end_date='2026-04-26 00:00:00.00'
+    )
+    
     db = None
 
     if data:
@@ -16,7 +29,26 @@ def main():
 
             metrics = calculate_metrics(data)
 
-            sheets_connect(metrics)
+            uploader = GoogleSheetsService()
+
+            uploader.upload_data(metrics)
+
+            current_dir = Path(__file__).resolve().parent
+
+            email_config_path = current_dir.parent / "data" / "email_config.json"
+
+            with open(email_config_path, "r", encoding="utf-8") as f:
+                EMAIL_CONFIG = json.load(f)
+
+            mail_sender = EmailService(**EMAIL_CONFIG)
+
+            url = 'https://docs.google.com/spreadsheets/d/1e-ANzHGEP9uwjbBGUNCXiSRPV-p17ClOm3C0NUlCu6o'
+
+            mail_sender.send_email(
+                recipient='liza.rachevskaya@mail.ru',
+                body = f'Check the google-sheets table for new info:<br><a href="{url}">{url}</a>',
+                subject = 'New metrics counted'
+            )
 
         except Exception as ex:
             logger.error(ex)
